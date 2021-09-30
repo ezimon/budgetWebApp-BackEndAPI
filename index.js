@@ -1,6 +1,7 @@
 const express = require("express");
 const { google } = require("googleapis");
 const app = express();
+const cors = require("cors");
 
 // CONSTANTES DEFINIDAS
 const auth = new google.auth.GoogleAuth({
@@ -20,10 +21,14 @@ app.set('views', './views');
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/views'));
+app.use(cors());
+
 
 app.get("/", (req, res) => {
-    res.json('wsup')
+    res.json('wsup');
 });
+
+
 
 // app.post("/", async (req, res) => {
 //     const { request, name } = req.body;
