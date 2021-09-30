@@ -77,7 +77,7 @@ app.post("/submit", async (req, res) => {
                 values: [[monto, tipo]],
             }
         })
-        res.redirect('/');
+        res.redirect('http://localhost:3000');
     });
 
 const wsup = "El servidor para que Dani vea que está haciendo Saimon está funcando";
