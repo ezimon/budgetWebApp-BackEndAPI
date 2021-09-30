@@ -3,71 +3,46 @@
 
 <head>
     <title>Finance WebApp</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 
-<script type="text/javascript">
-    function check(elem) {
-        // use one of possible conditions
-        // if (elem.value == 'Other')
-        if (elem.value === 'pers' && ) {
-            document.getElementById("other-div").style.display = 'block';
-        } else {
-            document.getElementById("other-div").style.display = 'none';
-        }
-    }
-    // if (document.getElementById('select').value === 'pers') {
-    //     form.appendChild(customInput)
-    // }
-    console.log();
-</script>
+<h1>Finanzas Helendra</h1>
+<br>
+<div id="bckp">
+<p>Ingresa los datos</p>
+</div>
 
-<body>
-    <form method="post" id='form' action="/submit">
-        <input type="number" name="monto" id='monto' placeholder="Monto">
-        <select name="tipo" id='select' onchange="check(this)">
-            <option value="Superverdiética">Superverdiética</option>
-            <option value="Comida exterior/Delivery">Comida exterior/Delivery</option>
-            <option value="Tabaco">Tabaco</option>
-            <option value="Expensas">Expensas</option>
-            <option value="Servicios">Servicios</option>
-            <option value="pers">PERSONALIZADO</option>
-        </select>
-        <div id="other-option" style="display:none;">
-            <label>Enter your Name
-                <input type='text' id="other-input" name='tipoPers' placeholder='Concepto'></input>
-            </label>
-        </div>
-        <button type="submit">Continue</button>
-    </form>
+id
+
+<body class="body">
+<h1>funca</h1>
 </body>
 
+<script type="text/javascript">
 
-</html>
+    var chekc = document.getElementById('monto');
+    var eskere = document.getElementById('submit');
+    var a = document.getElementById('select');
+    var btn = document.getElementsById('btn');
 
-<!-- 
-<script>
-// Put this script in header or above select element
-    function check(elem) {
-        // use one of possible conditions
-        // if (elem.value == 'Other')
-        if (elem.selectedIndex == 3) {
-            document.getElementById("other-div").style.display = 'block';
+//           AGREGALE DISABLED AL BUTTON
+
+
+ //   a.addEventListener('change', function checkw() {
+ //           if (chekc.value.length !== 0 || a.value !== "0") {
+ //               btn.removeAttribute("disabled");;
+ //           } else {
+ //               alert.("ingresa")
+ //           }
+ //       }
+ //   )
+    
+    a.addEventListener('change', function check() {
+        if (this.value === 'pers') {
+            document.getElementById("other-option").style.display = 'inline';
         } else {
-            document.getElementById("other-div").style.display = 'none';
+            document.getElementById("other-option").style.display = 'none';
         }
-    }
+    }, false);
 </script>
-
-<select id="mySelect" onChange="check(this);">
-        <option>Choose Your Name</option>
-        <option>Frank</option>
-        <option>George</option>
-        <option>Other</option>
-</select>
-<div id="other-div" style="display:none;">
-        <label>Enter your Name
-        <input id="other-input"></input>
-        </label>
-</div> 
--->
+</html>

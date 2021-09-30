@@ -19,45 +19,46 @@ const spreadsheetId = "1mUhl_FfdbIVPv48MBp0ZLqkBTXcwCKhCxsREMnE8PqY";
 app.set('views', './views');
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + '/views'));
 
 app.get("/", (req, res) => {
-    res.render('index')
+    res.render('index.ejs')
 });
 
-app.post("/", async (req, res) => {
-    const { request, name } = req.body;
-    res.json('CARGADOOO');
+// app.post("/", async (req, res) => {
+//     const { request, name } = req.body;
+//     res.json('CARGADOOO');
 
-    // Get metadata about spreadsheet
-    const metaData = await googleSheets.spreadsheets.get({
-        auth,
-        spreadsheetId,
-    });
+//     // Get metadata about spreadsheet
+//     const metaData = await googleSheets.spreadsheets.get({
+//         auth,
+//         spreadsheetId,
+//     });
 
-    // Read rows from spreadsheet
-    const getRows = await googleSheets.spreadsheets.values.get({
-        auth,
-        spreadsheetId,
-        range: "pito!A:A",
-    });
+//     // Read rows from spreadsheet
+//     const getRows = await googleSheets.spreadsheets.values.get({
+//         auth,
+//         spreadsheetId,
+//         range: "pito!A:A",
+//     });
 
-    // Write row(s) to spreadsheet
-    await googleSheets.spreadsheets.values.append({
-        auth,
-        spreadsheetId,
-        range: "pito!A:B",
-        valueInputOption: "USER_ENTERED",
-        resource: {
-            values: [['Concepto', 'Egreso']],
-        },
-    });
+//     // Write row(s) to spreadsheet
+//     await googleSheets.spreadsheets.values.append({
+//         auth,
+//         spreadsheetId,
+//         range: "pito!A:B",
+//         valueInputOption: "USER_ENTERED",
+//         resource: {
+//             values: [['Concepto', 'Egreso']],
+//         },
+//     });
 
-    res.send("Successfully submitted! Thank you!");
-});
+//     res.send("Successfully submitted! Thank you!");
+// });
 
-const addInput = () => {
+// const addInput = () => {
     
-}
+// }
 
 app.post("/submit", async (req, res) => {
     let  {monto, tipo, tipoPers} = req.body;
@@ -71,8 +72,8 @@ app.post("/submit", async (req, res) => {
                 values: [[monto, tipo]],
             }
         })
-        res.json(req.body);
+        res.redirect('/');
     });
 
-const wsup = "guido es la putita favorita de accenture";
-app.listen(1337, (req, res) => console.log(wsup));
+const wsup = "El servidor para que Dani vea que está haciendo Saimon está funcando";
+app.listen(process.env.PORT || 1337, (req, res) => console.log(wsup));

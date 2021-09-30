@@ -1,0 +1,13 @@
+.body {
+    text-align: center;
+    justify-content: center;
+    background-image: url("bckgimg.JPG");
+    background-size: cover;
+    font-family: "Segoe UI",Arial,sans-serif;
+}
+
+.bckp, p {
+    font-weight: bold;
+    background-color: salmon;
+    margin: 1,1,1,1;
+}
