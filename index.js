@@ -41,7 +41,7 @@ app.post("/submit", async (req, res) => {
             range: "pito!A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [[fecha.toLocaleDateString("en-GB"), tipo, '', monto, paga]],
+                values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, '', paga]],
             }
         })
     } else {
@@ -51,7 +51,7 @@ app.post("/submit", async (req, res) => {
             range: "pito!A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, '', paga]],
+                values: [[fecha.toLocaleDateString("en-GB"), tipo, '', monto, paga]],
             }
         })
     }
