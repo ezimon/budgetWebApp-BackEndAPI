@@ -66,19 +66,18 @@ app.get("/", (req, res) => {
 // }
 
 app.post("/submit", async (req, res) => {
-    let  {monto, tipo, tipoPers} = req.body;
-    if (tipo === 'pers') {tipo = tipoPers}
+    let  {monto, tipo} = req.body;
+    let fecha = new Date();
     await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: "pito!A:B",
+            range: "pito!A:C",
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [[monto, tipo]],
+                values: [[monto, tipo, fecha]],
             }
         })
         res.redirect('http://localhost:3000');
     });
 
-const wsup = "El servidor para que Dani vea que está haciendo Saimon está funcando";
-app.listen(process.env.PORT || 1337, (req, res) => console.log(wsup));
+app.listen(process.env.PORT || 1337, (req, res) => console.log('wsup'));
