@@ -68,7 +68,7 @@ app.get("/", (req, res) => {
 app.post("/submit", async (req, res) => {
     let  {monto, tipo, paga} = req.body;
     const fecha = new Date();
-    if (paga === 'FC') { paga = ''; };
+
     await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
