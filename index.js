@@ -72,10 +72,10 @@ app.post("/submit", async (req, res) => {
     await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: "pito!A:D",
+            range: "pito!A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [[monto, tipo, paga, fecha.toLocaleDateString("en-GB")]],
+                values: [[monto, tipo, fecha.toLocaleDateString("en-GB"), paga]],
             }
         })
         res.redirect('http://localhost:3000');
