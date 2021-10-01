@@ -75,7 +75,7 @@ app.post("/submit", async (req, res) => {
             range: "pito!A:D",
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [fecha.toLocaleDateString("en-GB"), monto, tipo, paga],
+                values: [[monto, tipo, paga, fecha.toLocaleDateString("en-GB")]],
             }
         })
         res.redirect('http://localhost:3000');
