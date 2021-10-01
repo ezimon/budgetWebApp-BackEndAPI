@@ -66,15 +66,22 @@ app.get("/", (req, res) => {
 // }
 
 app.post("/submit", async (req, res) => {
-    let  {monto, tipo} = req.body;
+    let  {monto, tipo, paga} = req.body;
     let fecha = new Date();
+    if (paga === 'FC'){
+        let paga = '';
+    } else if (paga === 'S') {
+        let paga = 'de Simón'
+    } else (paga === 'D') {
+        let paga = 'de Dani'
+    }
     await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
             range: "pito!A:C",
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [[monto, tipo, fecha.toLocaleDateString("en-GB")]],
+                values: [[fecha.toLocaleDateString("en-GB"), monto, tipo, paga]],
             }
         })
         res.redirect('http://localhost:3000');
