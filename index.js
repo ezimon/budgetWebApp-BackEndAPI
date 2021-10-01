@@ -29,56 +29,37 @@ app.get("/", (req, res) => {
 });
 
 
-
-// app.post("/", async (req, res) => {
-//     const { request, name } = req.body;
-//     res.json('CARGADOOO');
-
-//     // Get metadata about spreadsheet
-//     const metaData = await googleSheets.spreadsheets.get({
-//         auth,
-//         spreadsheetId,
-//     });
-
-//     // Read rows from spreadsheet
-//     const getRows = await googleSheets.spreadsheets.values.get({
-//         auth,
-//         spreadsheetId,
-//         range: "pito!A:A",
-//     });
-
-//     // Write row(s) to spreadsheet
-//     await googleSheets.spreadsheets.values.append({
-//         auth,
-//         spreadsheetId,
-//         range: "pito!A:B",
-//         valueInputOption: "USER_ENTERED",
-//         resource: {
-//             values: [['Concepto', 'Egreso']],
-//         },
-//     });
-
-//     res.send("Successfully submitted! Thank you!");
-// });
-
-// const addInput = () => {
-    
-// }
-
 app.post("/submit", async (req, res) => {
-    let  {monto, tipo, paga} = req.body;
+    let { monto, tipo, paga, operacion } = req.body;
     const fecha = new Date();
-//    if (paga === 'FC') { paga = ''; };
-    await googleSheets.spreadsheets.values.append({
+    if (paga === 'FC') { paga = ''; };
+
+    if (tipo === 'INGRESO') {
+        await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: "pito!A:D",
+            range: "pito!A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, paga]],
+                values: [[fecha.toLocaleDateString("en-GB"), tipo, '', monto, paga]],
             }
         })
-        res.redirect('http://localhost:3000');
-    });
+    } else {
+        await googleSheets.spreadsheets.values.append({
+            auth,
+            spreadsheetId,
+            range: "pito!A:E",
+            valueInputOption: "USER_ENTERED",
+            resource: {
+                values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, '', paga]],
+            }
+        })
+    }
+
+    
+    res.redirect('http://localhost:3000');
+
+
+});
 
 app.listen(process.env.PORT || 1337, (req, res) => console.log('wsup'));
