@@ -30,10 +30,10 @@ app.get("/", (req, res) => {
 
 
 app.post("/submit", async (req, res) => {
-    let { monto, tipo, paga, operacion } = req.body;
+    let { monto, tipo, paga, tipoPers } = req.body;
     const fecha = new Date();
     if (paga === 'FC') { paga = ''; };
-
+    if (tipo === 'pers') {tipo = tipoPers}
     if (tipo === 'INGRESO') {
         await googleSheets.spreadsheets.values.append({
             auth,
@@ -56,7 +56,7 @@ app.post("/submit", async (req, res) => {
         })
     }
 
-    
+
     res.redirect('http://localhost:3000');
 
 
