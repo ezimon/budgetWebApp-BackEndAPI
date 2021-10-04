@@ -61,7 +61,7 @@ app.post("/submit", async (req, res) => {
 
 });
 
-app.listen(process.env.PORT || 1337, (req, res) =>         await googleSheets.spreadsheets.values.get({
+app.listen(process.env.PORT || 1337, (req, res) => await googleSheets.spreadsheets.values.get({
     spreadsheetId,
     range: "pito!E:E",
 }, (err, result) => {
