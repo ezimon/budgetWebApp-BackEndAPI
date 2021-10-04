@@ -32,33 +32,31 @@ app.get("/", (req, res) => {
 app.post("/submit", async (req, res) => {
     let { monto, tipo, paga, tipoPers } = req.body;
     const fecha = new Date();
+    const sheetnum = fecha.getMonth();
     if (paga === 'FC') { paga = ''; };
     if (tipo === 'pers') {tipo = tipoPers}
     if (tipo === 'INGRESO') {
         await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: "pito!A:E",
+            range: `${sheetnum}!A:E`,
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, '', paga]],
             }
         })
-
     } else {
         await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: "pito!A:E",
+            range: `${sheetnum}!A:E`,
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[fecha.toLocaleDateString("en-GB"), tipo, '', monto, paga]],
             }
         })
     }
-
     res.redirect('back');
-
 });
 
 app.listen(process.env.PORT || 1337, (req, res) => console.log('wsup'));
