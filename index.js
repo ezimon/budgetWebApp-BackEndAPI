@@ -39,7 +39,7 @@ app.post("/submit", async (req, res) => {
         await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: sheetnum!A:E,
+            range: sheetnum"!A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, '', paga]],
@@ -49,7 +49,7 @@ app.post("/submit", async (req, res) => {
         await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: sheetnum!A:E,
+            range: sheetnum"!A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[fecha.toLocaleDateString("en-GB"), tipo, '', monto, paga]],
