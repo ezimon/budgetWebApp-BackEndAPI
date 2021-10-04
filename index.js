@@ -45,17 +45,6 @@ app.post("/submit", async (req, res) => {
             }
         })
 
-        await googleSheets.spreadsheets.values.get({
-            spreadsheetId,
-            range: "pito!E:E",
-        }, (err, result) => {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log(result.valueRanges);
-            }
-          });
-
     } else {
         await googleSheets.spreadsheets.values.append({
             auth,
@@ -72,4 +61,13 @@ app.post("/submit", async (req, res) => {
 
 });
 
-app.listen(process.env.PORT || 1337, (req, res) => console.log('wsup'));
+app.listen(process.env.PORT || 1337, (req, res) =>         await googleSheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: "pito!E:E",
+}, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (result.valueRanges = 0) {console.log('aint wrkn') } else {console.log(result.valueRanges)}
+    }
+  }));
