@@ -50,10 +50,9 @@ app.post("/submit", async (req, res) => {
             range: "pito!E:E",
         }, (err, result) => {
             if (err) {
-              // Handle error
               console.log(err);
             } else {
-              console.log(`${result.valueRanges.length} ranges retrieved.`);
+              console.log(result.valueRanges);
             }
           });
 
