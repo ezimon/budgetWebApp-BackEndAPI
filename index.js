@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 app.post("/submit", async (req, res) => {
     let { monto, tipo, paga, tipoPers } = req.body;
     const fecha = new Date();
-    const sheetnum = fecha.getMonth().toString;
+    const sheetnum = fecha.getMonth().toLocaleDateString("en-GB");
     if (paga === 'FC') { paga = ''; };
     if (tipo === 'pers') {tipo = tipoPers}
     if (tipo === 'INGRESO' ) {
