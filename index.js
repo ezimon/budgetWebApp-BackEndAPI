@@ -57,7 +57,7 @@ app.post("/submit", async (req, res) => {
     }
 
 
-    res.redirect('http://localhost:3000');
+    res.redirect('back');
 
 
 });
