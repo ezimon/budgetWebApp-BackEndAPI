@@ -33,13 +33,14 @@ app.post("/submit", async (req, res) => {
     let { monto, tipo, paga, tipoPers } = req.body;
     const fecha = new Date() ;
     const sheetnum = fecha.getMonth();
+    const shh = 'pito';
     if (paga === 'FC') { paga = ''; };
     if (tipo === 'pers') {tipo = tipoPers}
     if (tipo === 'INGRESO' ) {
         await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: "pito!A:E",
+            range: shh+"A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, '', paga]],
@@ -49,7 +50,7 @@ app.post("/submit", async (req, res) => {
         await googleSheets.spreadsheets.values.append({
             auth,
             spreadsheetId,
-            range: "pito!A:E",
+            range: shh+"A:E",
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[fecha.toLocaleDateString("en-GB"), tipo, '', monto, paga]],
