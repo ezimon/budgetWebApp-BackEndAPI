@@ -44,6 +44,19 @@ app.post("/submit", async (req, res) => {
                 values: [[fecha.toLocaleDateString("en-GB"), tipo, monto, '', paga]],
             }
         })
+
+        await googleSheets.spreadsheets.values.get({
+            spreadsheetId,
+            range: "pito!E:E",
+        }, (err, result) => {
+            if (err) {
+              // Handle error
+              console.log(err);
+            } else {
+              console.log(`${result.valueRanges.length} ranges retrieved.`);
+            }
+          });
+
     } else {
         await googleSheets.spreadsheets.values.append({
             auth,
@@ -56,9 +69,7 @@ app.post("/submit", async (req, res) => {
         })
     }
 
-
     res.redirect('back');
-
 
 });
 
