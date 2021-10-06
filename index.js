@@ -27,12 +27,12 @@ app.get("/", (req, res) => {
 });
 
 
-app.get("/saldo", (apiUrl, res, saldo) => {
+app.get("/saldo", (req, res) => {
     const sheetname = moment().format('MMMM');
     googleSheets.spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: sheetname + '!G1',
+        range: sheetname + '!G2',
     }, (err, result) => {
         if (err) {
             console.log('err')
@@ -89,6 +89,7 @@ app.post("/submit", async (req, res) => {
         })
     }
     res.status(200);
+    res.redirect('back');
 });
 
 app.listen(process.env.PORT || 1337, (req, res) => console.log('wsup'));
