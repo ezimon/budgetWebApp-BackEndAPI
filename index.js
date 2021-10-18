@@ -26,6 +26,69 @@ app.get("/", (req, res) => {
   res.json("Whatchu looking at?");
 });
 
+app.get("/historial", (req, res, sheetname) => {
+  console.log(sheetname)
+  if (req.params.sheetname === 'mesA') {
+    const sheetname = moment().format("MMMM");
+  } else {
+    let { sheetname } = req.params;
+  }
+  googleSheets.spreadsheets.values.get(
+    {
+      auth,
+      spreadsheetId,
+      range: sheetname + "!A3:F1000",
+    },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        var swag = [];
+        const hists = result.data.values;
+        var hist = hists.filter((hists) => Object.keys(hists).length !== 0);
+        for (var i = 0; i < hist.length; i++) {
+          var histElem = hist[i];
+          var obj = {};
+          for (var j = 0; j < histElem.length; j++) {
+            Object.assign(obj, histElem);
+          }
+          swag.push(obj);
+          if (obj[2] === "") {
+            obj[2] = obj[3]
+            obj[3] = ""
+          }
+        }
+        res.json(swag);
+      }
+    }
+  );
+});
+
+// histElem.reduce(function(result, item, j, histElem) {
+//   result[j] = [j]; //a, b, c
+//   return result; }
+
+//////////////////////////////////////////////////////////
+// TOTALES DE CONCEPTO AUTO
+
+app.get("/totales", (req, res) => {
+  googleSheets.spreadsheets.values.get(
+    {
+      auth,
+      spreadsheetId,
+      range: "Recount!B2:M10",
+    },
+    (err, result) => {
+      if (err) {
+        console.log("err");
+      } else {
+        const data = result.data.values;
+        res.json(data);
+      }
+    }
+  );
+}); 
+
 //////////////////////////////////////////////////////
 // SALDAR
 
@@ -39,7 +102,7 @@ app.get("/saldarD", (req, res) => {
     },
     (err, result) => {
       if (err) {
-        console.log("err");
+        console.log(err);
       } else {
         const saldaD = result.data.values[0].join("");
         res.json(saldaD);
@@ -58,7 +121,7 @@ app.get("/saldarS", (req, res) => {
     },
     (err, result) => {
       if (err) {
-        console.log("err");
+        console.log(err);
       } else {
         const saldaS = result.data.values[0].join("");
         res.json(saldaS);
@@ -110,7 +173,25 @@ app.get("/correspS", (req, res) => {
 
 //////////////////////////////////////////////////////
 
-app.get("/promedio", (req, res) => {
+app.get("/promediomes", (req, res) => {
+  googleSheets.spreadsheets.values.get(
+    {
+      auth,
+      spreadsheetId,
+      range: "Recount!P2:P11",
+    },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        const data = result.data.values;
+        res.json(data);
+      }
+    }
+  );
+});
+
+app.get("/promediodia", (req, res) => {
   const sheetname = moment().format("MMMM");
   const daysLeft = 30 - moment().format("DD");
   googleSheets.spreadsheets.values.get(
@@ -125,60 +206,13 @@ app.get("/promedio", (req, res) => {
       } else {
         const saldo = result.data.values[0].join("");
         const promedioRaw = saldo / daysLeft;
-        const promedio = Math.round(promedioRaw);
+        const promedioS = Math.round(promedioRaw);
+        const promedio = Math.ceil(promedioS / 10) * 10;
         res.json(promedio);
       }
     }
   );
 });
-
-// app.get("/update", (reg, res) => {
-//   const sheetname = moment().format("MMMM");
-//   const sheetnameP = moment().subtract(1, "M").format("MMMM");
-
-//   if (moment().format("D") === 1) {
-//     googleSheets.spreadsheets.values.get(
-//       {
-//         auth,
-//         spreadsheetId,
-//         range: sheetnameP + "!G2",
-//       },
-//       (err, result) => {
-//         if (err) {
-//           console.log("err");
-//         } else {
-//           const saldoP = result.data.values[0].join("");
-//         }
-//       }
-//     );
-//   }
-// });
-
-// googleSheets.spreadsheets.values.get({
-//     auth,
-//     spreadsheetId,
-//     range: sheetname + '!U2',
-// }, (err, result) => {
-//     if (err) {
-//         console.log('err')
-//     } else {
-//         const dia = result.data.values[0].join('').slice(0, 2);
-//         res.json(30-dia);
-//     }
-// });
-// googleSheets.spreadsheets.values.get({
-//     auth,
-//     spreadsheetId,
-//     range: sheetname + '!G2',
-// }, (err, result) => {
-//     if (err) {
-//         console.log(err)
-//     } else {
-//         const saldo = result.data.value[0].join('');
-//         res.json(saldo);
-//     }
-// }
-// )
 
 app.get("/saldo", (req, res) => {
   const sheetname = moment().format("MMMM");
@@ -224,21 +258,19 @@ app.get("/recount", (req, res) => {
     {
       auth,
       spreadsheetId,
-      range: "Recount!C2:K2",
+      range: "Recount!N2:N10",
     },
     (err, result) => {
       if (err) {
         console.log("err");
       } else {
-        const recount = result.data.values[0];
+        const recount = result.data.values.flat();
         res.json(recount);
+        // console.log(recount)
       }
     }
   );
 });
-
-
-
 
 app.get("/promedio", (req, res) => {
   const sheetname = moment().format("MMMM");
@@ -262,12 +294,14 @@ app.get("/promedio", (req, res) => {
 app.post("/submit", async (req, res) => {
   let { monto, tipo, paga, tipoPers, sheetname, specs } = req.body;
   const fecha = moment().format("DD/MM/YYYY");
-//   const sheetname = moment().format("MMMM");
+  //   const sheetname = moment().format("MMMM");
   console.log(req.body);
-  if (paga === "FC") {
-    paga = "";
-  } 
-  if (sheetname === 'mesA') {sheetname = moment().format("MMMM")}
+  // if (paga === "FC") {
+  //   paga = "";
+  // }
+  if (sheetname === "mesA") {
+    sheetname = moment().format("MMMM");
+  }
   if (tipo === "pers") {
     tipo = tipoPers;
   }
