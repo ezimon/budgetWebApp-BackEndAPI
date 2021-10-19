@@ -28,7 +28,6 @@ app.get("/", (req, res) => {
 
 app.get("/historial/:sheetname", (req, res) => {
   sheetname = req.params.sheetname;
-  console.log(sheetname);
   if (sheetname === "mesA") {
     sheetname = moment().format("MMMM");
   }
@@ -45,9 +44,8 @@ app.get("/historial/:sheetname", (req, res) => {
         var swag = [];
         const hists = result.data.values;
         if (hists === undefined) {
-          res.json([{ 0: '', 1: "NO DATA"}]);
+          res.json([{ 0: "", 1: "NO DATA" }]);
         } else {
-          console.log(hists);
           var hist = hists.filter((hists) => Object.keys(hists).length !== 0);
           for (var i = 0; i < hist.length; i++) {
             var histElem = hist[i];
@@ -68,9 +66,35 @@ app.get("/historial/:sheetname", (req, res) => {
   );
 });
 
-// histElem.reduce(function(result, item, j, histElem) {
-//   result[j] = [j]; //a, b, c
-//   return result; }
+app.post("/delete", (req, res) => {
+  let { indexes, sheetname } = req.body;
+  if (sheetname === "mesA") {
+    sheetname = moment().format("MMMM");
+  }
+  const fecha = moment().format("DD/MM/YYYY");
+  index = indexes[0] + 3;
+  console.log(indexes)
+  console.log(index);
+  googleSheets.spreadsheets.values.update(
+    {
+      auth,
+      spreadsheetId,
+      range: `${sheetname}!A${index}:F${index}`,
+      valueInputOption: "USER_ENTERED",
+      resource: {
+        values: [['', '', '', '', '', '', ]],
+      },
+    },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200).send("Something DIED");
+        res.redirect("back");
+      }
+    }
+  );
+});
 
 //////////////////////////////////////////////////////////
 // TOTALES DE CONCEPTO AUTO
@@ -330,8 +354,7 @@ app.post("/submit", async (req, res) => {
       },
     });
   }
-  // res.status(200);
-  res.status(200).send("¨Something DIED");
+  res.status(200).send("Something DIED");
   res.redirect("back");
 });
 
