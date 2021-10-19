@@ -26,12 +26,11 @@ app.get("/", (req, res) => {
   res.json("Whatchu looking at?");
 });
 
-app.get("/historial", (req, res, sheetname) => {
-  console.log(sheetname)
-  if (req.params.sheetname === 'mesA') {
-    const sheetname = moment().format("MMMM");
-  } else {
-    let { sheetname } = req.params;
+app.get("/historial/:sheetname", (req, res) => {
+  sheetname = req.params.sheetname;
+  console.log(sheetname);
+  if (sheetname === "mesA") {
+    sheetname = moment().format("MMMM");
   }
   googleSheets.spreadsheets.values.get(
     {
@@ -41,24 +40,29 @@ app.get("/historial", (req, res, sheetname) => {
     },
     (err, result) => {
       if (err) {
-        console.log(err);
+        console.log("err");
       } else {
         var swag = [];
         const hists = result.data.values;
-        var hist = hists.filter((hists) => Object.keys(hists).length !== 0);
-        for (var i = 0; i < hist.length; i++) {
-          var histElem = hist[i];
-          var obj = {};
-          for (var j = 0; j < histElem.length; j++) {
-            Object.assign(obj, histElem);
+        if (hists === undefined) {
+          res.json([{ 0: '', 1: "NO DATA"}]);
+        } else {
+          console.log(hists);
+          var hist = hists.filter((hists) => Object.keys(hists).length !== 0);
+          for (var i = 0; i < hist.length; i++) {
+            var histElem = hist[i];
+            var obj = {};
+            for (var j = 0; j < histElem.length; j++) {
+              Object.assign(obj, histElem);
+            }
+            swag.push(obj);
+            if (obj[2] === "") {
+              obj[2] = obj[3];
+              obj[3] = "";
+            }
           }
-          swag.push(obj);
-          if (obj[2] === "") {
-            obj[2] = obj[3]
-            obj[3] = ""
-          }
+          res.json(swag);
         }
-        res.json(swag);
       }
     }
   );
@@ -87,7 +91,7 @@ app.get("/totales", (req, res) => {
       }
     }
   );
-}); 
+});
 
 //////////////////////////////////////////////////////
 // SALDAR
