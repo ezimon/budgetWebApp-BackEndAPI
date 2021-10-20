@@ -73,7 +73,7 @@ app.post("/delete", (req, res) => {
   }
   const fecha = moment().format("DD/MM/YYYY");
   index = indexes[0] + 3;
-  console.log(indexes)
+  console.log(indexes);
   console.log(index);
   googleSheets.spreadsheets.values.update(
     {
@@ -82,7 +82,7 @@ app.post("/delete", (req, res) => {
       range: `${sheetname}!A${index}:F${index}`,
       valueInputOption: "USER_ENTERED",
       resource: {
-        values: [['', '', '', '', '', '', ]],
+        values: [[fecha, "ELIMINADO", "", "", "", ""]],
       },
     },
     (err, result) => {
@@ -295,6 +295,43 @@ app.get("/recount", (req, res) => {
         const recount = result.data.values.flat();
         res.json(recount);
         // console.log(recount)
+      }
+    }
+  );
+});
+
+// app.get("/check", (req, res) => {
+//   googleSheets.spreadsheets.values.get(
+//     {
+//       auth,
+//       spreadsheetId,
+//       range: "Recount!N11",
+//     },
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         const resp = result.data.values[0][0];
+//         res.json(resp);
+//         console.log(resp)
+//       }
+//     }
+//   );
+// });
+ 
+app.get("/check", (req, res) => {
+  googleSheets.spreadsheets.values.get(
+    {
+      auth,
+      spreadsheetId,
+      range: "Recount!N11",
+    },
+    (err, result) => {
+      if (err) {
+        console.log("err");
+      } else {
+        const resp = result.data.values[0].join("");
+        res.json(resp);
       }
     }
   );
