@@ -3,7 +3,6 @@ const { google } = require("googleapis");
 const app = express();
 const cors = require("cors");
 const moment = require("moment");
-// const bodyParser = require('body-parser');
 
 // CONSTANTES DE GOOGLE DEFINIDAS
 const auth = new google.auth.GoogleAuth({
@@ -12,7 +11,12 @@ const auth = new google.auth.GoogleAuth({
 });
 const client = auth.getClient();
 const googleSheets = google.sheets({ version: "v4", auth: client });
-const spreadsheetId = "1mUhl_FfdbIVPv48MBp0ZLqkBTXcwCKhCxsREMnE8PqY";
+const cuotasSheetId = "1i_wKKLCKeAhMVkVm23W_CSoSB18vfdCXXpw9864VWhY";
+const spreadsheets = [
+  "1mUhl_FfdbIVPv48MBp0ZLqkBTXcwCKhCxsREMnE8PqY",
+  "1OJOn8N0sz8P3W1qjIRRO5aao4ARydBm3Au5VvcFRyCU",
+];
+spreadsheetId = spreadsheets[moment().format("YYYY") - 2021];
 
 app.set("views", "./views");
 app.set("view engine", "ejs");
@@ -20,10 +24,93 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/views"));
 app.use(cors());
 app.use(express.json());
-// app.use(bodyParser.json);
 
 app.get("/", (req, res) => {
   res.json("Whatchu looking at?");
+});
+
+app.post("/submit", async (req, res) => {
+  let { monto, tipo, paga, tipoPers, sheetname, specs } = req.body;
+  const fecha = moment().format("DD/MM/YYYY");
+  data = [fecha, tipo, "", monto, paga, specs];
+
+  if (sheetname === "mesA") {
+    sheetname = moment().format("MMMM");
+  }
+  if (tipo === "pers") {
+    tipo = tipoPers;
+  }
+  if (tipo === "INGRESO") {
+    data[2] = data[3];
+    data[3] = "";
+  }
+  googleSheets.spreadsheets.values.append({
+    auth,
+    spreadsheetId,
+    range: sheetname + "!A:F",
+    valueInputOption: "USER_ENTERED",
+    resource: {
+      values: [data],
+    },
+  });
+  res.status(200).send("sup");
+  res.redirect("back");
+});
+
+app.post("/cuotas", (req, res) => {
+  let { cantidad, monto, concepto } = req.body;
+  mesA = Number(moment().format("MM"));
+  data = [concepto, `$${monto}`];
+  mesesT = mesA + Number(cantidad);
+  year = Number(moment().format("YYYY"));
+  let arrayFull;
+  const googleAppend = (year, data) => {
+    googleSheets.spreadsheets.values.append(
+      {
+        auth,
+        spreadsheetId: cuotasSheetId,
+        range: year + "!A1",
+        valueInputOption: "USER_ENTERED",
+        resource: {
+          values: [data],
+        },
+      },
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json(200);
+        }
+      }
+    );
+  };
+  for (var i = 0; i < mesA; i++) {
+    data.push("");
+  }
+  for (var i = 0; i < cantidad; i++) {
+    data.push(`$${monto / cantidad}`);
+  }
+  const sliceArray = (data) => {
+    if (data.length / 14 > 1) {
+      const dataA = data.slice(0, 14);
+      const dataB = [concepto, `$${monto}`, data.slice(14, 26)].flat();
+      const dataC = [concepto, `$${monto}`, data.slice(26, 38)].flat();
+      const dataD = [concepto, `$${monto}`, data.slice(38, 50)].flat();
+      arrayFull = [dataA, dataB, dataC, dataD];
+    } else {
+      return data;
+    }
+  };
+  sliceArray(data);
+  for (let i = 0; i < arrayFull.length; i++) {
+    if (arrayFull[i].length <= 2) {
+      arrayFull[i] = [];
+    }
+  }
+  for (let i = 0; i < arrayFull.length; i++) {
+    const element = arrayFull[i];
+    googleAppend(year + i, element);
+  }
 });
 
 app.get("/historial/:sheetname", (req, res) => {
@@ -73,8 +160,6 @@ app.post("/delete", (req, res) => {
   }
   const fecha = moment().format("DD/MM/YYYY");
   index = indexes[0] + 3;
-  console.log(indexes);
-  console.log(index);
   googleSheets.spreadsheets.values.update(
     {
       auth,
@@ -89,15 +174,12 @@ app.post("/delete", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.status(200).send("Something DIED");
+        res.status(200);
         res.redirect("back");
       }
     }
   );
 });
-
-//////////////////////////////////////////////////////////
-// TOTALES DE CONCEPTO AUTO
 
 app.get("/totales", (req, res) => {
   googleSheets.spreadsheets.values.get(
@@ -117,89 +199,43 @@ app.get("/totales", (req, res) => {
   );
 });
 
-//////////////////////////////////////////////////////
-// SALDAR
-
-app.get("/saldarD", (req, res) => {
+app.get("/saldar", (req, res) => {
   const sheetname = moment().format("MMMM");
   googleSheets.spreadsheets.values.get(
     {
       auth,
       spreadsheetId,
-      range: sheetname + "!J2",
+      range: sheetname + "!J2:K2",
     },
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        const saldaD = result.data.values[0].join("");
-        res.json(saldaD);
+        const saldar = result.data.values[0];
+        res.json(saldar);
       }
     }
   );
 });
 
-app.get("/saldarS", (req, res) => {
+app.get("/corresp", (req, res) => {
   const sheetname = moment().format("MMMM");
   googleSheets.spreadsheets.values.get(
     {
       auth,
       spreadsheetId,
-      range: sheetname + "!K2",
-    },
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        const saldaS = result.data.values[0].join("");
-        res.json(saldaS);
-      }
-    }
-  );
-});
-
-//////////////////////////////////////////////////////
-// CORRESP
-
-app.get("/correspD", (req, res) => {
-  const sheetname = moment().format("MMMM");
-  googleSheets.spreadsheets.values.get(
-    {
-      auth,
-      spreadsheetId,
-      range: sheetname + "!I2",
+      range: sheetname + "!H2:I2",
     },
     (err, result) => {
       if (err) {
         console.log("err");
       } else {
-        const correspD = result.data.values[0].join("");
+        const correspD = result.data.values[0];
         res.json(correspD);
       }
     }
   );
 });
-
-app.get("/correspS", (req, res) => {
-  const sheetname = moment().format("MMMM");
-  googleSheets.spreadsheets.values.get(
-    {
-      auth,
-      spreadsheetId,
-      range: sheetname + "!H2",
-    },
-    (err, result) => {
-      if (err) {
-        console.log("err");
-      } else {
-        const correspS = result.data.values[0].join("");
-        res.json(correspS);
-      }
-    }
-  );
-});
-
-//////////////////////////////////////////////////////
 
 app.get("/promediomes", (req, res) => {
   googleSheets.spreadsheets.values.get(
@@ -300,25 +336,6 @@ app.get("/recount", (req, res) => {
   );
 });
 
-// app.get("/check", (req, res) => {
-//   googleSheets.spreadsheets.values.get(
-//     {
-//       auth,
-//       spreadsheetId,
-//       range: "Recount!N11",
-//     },
-//     (err, result) => {
-//       if (err) {
-//         console.log(err);
-//       } else {
-//         const resp = result.data.values[0][0];
-//         res.json(resp);
-//         console.log(resp)
-//       }
-//     }
-//   );
-// });
- 
 app.get("/check", (req, res) => {
   googleSheets.spreadsheets.values.get(
     {
@@ -354,45 +371,6 @@ app.get("/promedio", (req, res) => {
       }
     }
   );
-});
-
-app.post("/submit", async (req, res) => {
-  let { monto, tipo, paga, tipoPers, sheetname, specs } = req.body;
-  const fecha = moment().format("DD/MM/YYYY");
-  //   const sheetname = moment().format("MMMM");
-  console.log(req.body);
-  // if (paga === "FC") {
-  //   paga = "";
-  // }
-  if (sheetname === "mesA") {
-    sheetname = moment().format("MMMM");
-  }
-  if (tipo === "pers") {
-    tipo = tipoPers;
-  }
-  if (tipo === "INGRESO") {
-    await googleSheets.spreadsheets.values.append({
-      auth,
-      spreadsheetId,
-      range: sheetname + "!A:F",
-      valueInputOption: "USER_ENTERED",
-      resource: {
-        values: [[fecha, tipo, monto, "", paga, specs]],
-      },
-    });
-  } else {
-    await googleSheets.spreadsheets.values.append({
-      auth,
-      spreadsheetId,
-      range: sheetname + "!A:F",
-      valueInputOption: "USER_ENTERED",
-      resource: {
-        values: [[fecha, tipo, "", monto, paga, specs]],
-      },
-    });
-  }
-  res.status(200).send("Something DIED");
-  res.redirect("back");
 });
 
 app.listen(process.env.PORT || 1337, (req, res) => console.log("wsgood"));
