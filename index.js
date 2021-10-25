@@ -17,7 +17,6 @@ const spreadsheets = [
   "1OJOn8N0sz8P3W1qjIRRO5aao4ARydBm3Au5VvcFRyCU",
 ];
 spreadsheetId = spreadsheets[moment().format("YYYY") - 2021];
-
 app.set("views", "./views");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -159,26 +158,31 @@ app.post("/delete", (req, res) => {
     sheetname = moment().format("MMMM");
   }
   const fecha = moment().format("DD/MM/YYYY");
-  index = indexes[0] + 3;
-  googleSheets.spreadsheets.values.update(
-    {
-      auth,
-      spreadsheetId,
-      range: `${sheetname}!A${index}:F${index}`,
-      valueInputOption: "USER_ENTERED",
-      resource: {
-        values: [[fecha, "ELIMINADO", "", "", "", ""]],
+  // index = indexes[0] + 3;
+
+  const delFunction = (index) => {
+    googleSheets.spreadsheets.values.update(
+      {
+        auth,
+        spreadsheetId,
+        range: `${sheetname}!A${index}:F${index}`,
+        valueInputOption: "USER_ENTERED",
+        resource: {
+          values: [[fecha, "ELIMINADO", "", "", "", ""]],
+        },
       },
-    },
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.status(200);
-        res.redirect("back");
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        }
       }
-    }
-  );
+    );
+  };
+
+  indexes.forEach((index) => delFunction(index+3));
+  res.status(200);
+  res.redirect("back");
+
 });
 
 app.get("/totales", (req, res) => {
@@ -297,9 +301,10 @@ app.get("/saldo", (req, res) => {
   );
 });
 
-app.get("/cakeCurrent", (req, res) => {
+app.get("/cakeCurrent", async (req, res) => {
   const sheetname = moment().format("MMMM");
-  googleSheets.spreadsheets.values.get(
+  cake1 = [];
+  await googleSheets.spreadsheets.values.get(
     {
       auth,
       spreadsheetId,
@@ -310,7 +315,38 @@ app.get("/cakeCurrent", (req, res) => {
         console.log("err");
       } else {
         const cake = result.data.values[0];
-        res.json(cake);
+        cake1 = cake;
+      }
+    }
+  );
+  const num = Number(moment().format("MM")) + 1;
+  function numToSSColumn(num) {
+    let s = "",
+      t;
+    while (num > 0) {
+      t = (num - 1) % 26;
+      s = String.fromCharCode(65 + t) + s;
+      num = ((num - t) / 26) | 0;
+    }
+    return s || undefined;
+  }
+  const column = numToSSColumn(num);
+  cake2 = [];
+  const row = Number(moment().format("YYYY") - 2019);
+  await googleSheets.spreadsheets.values.get(
+    {
+      auth,
+      spreadsheetId: cuotasSheetId,
+      range: "Recount!" + column + row,
+    },
+    (err, result) => {
+      if (err) {
+        console.log("alo en esta function anda mal bue");
+      } else {
+        const cake3 = result.data.values[0][0];
+        cake2 = cake3;
+        cake1.push(cake2);
+        res.json(cake1);
       }
     }
   );
