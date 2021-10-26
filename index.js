@@ -158,8 +158,7 @@ app.post("/delete", (req, res) => {
     sheetname = moment().format("MMMM");
   }
   const fecha = moment().format("DD/MM/YYYY");
-  // index = indexes[0] + 3;
-
+  const prueba = [];
   const delFunction = (index) => {
     googleSheets.spreadsheets.values.update(
       {
@@ -174,15 +173,23 @@ app.post("/delete", (req, res) => {
       (err, result) => {
         if (err) {
           console.log(err);
+        } else {
+          prueba.push(index - 3);
+          Proceed(indexes);
+          // console.log(indexes)
         }
       }
     );
   };
+  indexes.forEach((index) => delFunction(index + 3));
 
-  indexes.forEach((index) => delFunction(index+3));
-  res.status(200);
-  res.redirect("back");
-
+  const Proceed = (indexes) => {
+    if ((prueba.reduce((partial_sum, a) => partial_sum + a,0) = indexes.reduce((partial_sum, a) => partial_sum + a,0))) {
+      res.status(200);
+      res.redirect("back");
+      console.log('funco');
+    }
+  };
 });
 
 app.get("/totales", (req, res) => {
