@@ -53,7 +53,6 @@ app.post("/submit", async (req, res) => {
     },
   });
   res.status(200).send("sup");
-  res.redirect("back");
 });
 
 app.post("/cuotas", (req, res) => {
@@ -64,8 +63,8 @@ app.post("/cuotas", (req, res) => {
   year = Number(moment().format("YYYY"));
   let arrayFull;
   const googleAppend = (year, data) => {
-    googleSheets.spreadsheets.values.append(
-      {
+    googleSheets.spreadsheets.values
+      .append({
         auth,
         spreadsheetId: cuotasSheetId,
         range: year + "!A1",
@@ -73,15 +72,9 @@ app.post("/cuotas", (req, res) => {
         resource: {
           values: [data],
         },
-      },
-      (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          res.json(200);
-        }
-      }
-    );
+      })
+      .then(() => res.status(200).json({}))
+      .catch((err) => console.log(err));
   };
   for (var i = 0; i < mesA; i++) {
     data.push("");
@@ -158,7 +151,8 @@ app.post("/delete", (req, res) => {
     sheetname = moment().format("MMMM");
   }
   const fecha = moment().format("DD/MM/YYYY");
-  const prueba = [];
+  // index = indexes[0] + 3;
+
   const delFunction = (index) => {
     googleSheets.spreadsheets.values.update(
       {
@@ -173,23 +167,14 @@ app.post("/delete", (req, res) => {
       (err, result) => {
         if (err) {
           console.log(err);
-        } else {
-          prueba.push(index - 3);
-          Proceed(indexes);
-          // console.log(indexes)
         }
       }
     );
   };
-  indexes.forEach((index) => delFunction(index + 3));
 
-  const Proceed = (indexes) => {
-    if ((prueba.reduce((partial_sum, a) => partial_sum + a,0) = indexes.reduce((partial_sum, a) => partial_sum + a,0))) {
-      res.status(200);
-      res.redirect("back");
-      console.log('funco');
-    }
-  };
+  indexes.forEach((index) => delFunction(index + 3));
+  res.status(200).json({});
+  res.redirect("back");
 });
 
 app.get("/totales", (req, res) => {
@@ -311,21 +296,6 @@ app.get("/saldo", (req, res) => {
 app.get("/cakeCurrent", async (req, res) => {
   const sheetname = moment().format("MMMM");
   cake1 = [];
-  await googleSheets.spreadsheets.values.get(
-    {
-      auth,
-      spreadsheetId,
-      range: sheetname + "!L2:T2",
-    },
-    (err, result) => {
-      if (err) {
-        console.log("err");
-      } else {
-        const cake = result.data.values[0];
-        cake1 = cake;
-      }
-    }
-  );
   const num = Number(moment().format("MM")) + 1;
   function numToSSColumn(num) {
     let s = "",
@@ -340,23 +310,40 @@ app.get("/cakeCurrent", async (req, res) => {
   const column = numToSSColumn(num);
   cake2 = [];
   const row = Number(moment().format("YYYY") - 2019);
-  await googleSheets.spreadsheets.values.get(
-    {
+  // await googleSheets.spreadsheets.values.get(
+  //   {
+  //     auth,
+  //     spreadsheetId,
+  //     range: sheetname + "!L2:T2",
+  //   },
+  //   (err, result) => {
+  //     if (err) {
+  //       console.log("err");
+  //     } else {
+  //       const cake = result.data.values[0];
+  //       cake1 = cake;
+  //     }
+  //   }
+  // );
+  await googleSheets.spreadsheets.values
+    .get({
+      auth,
+      spreadsheetId,
+      range: sheetname + "!L2:T2",
+    })
+    .then((data) => (cake1 = data.data.values[0]))
+    .catch((err) => res.json(err).status(400));
+  await googleSheets.spreadsheets.values
+    .get({
       auth,
       spreadsheetId: cuotasSheetId,
       range: "Recount!" + column + row,
-    },
-    (err, result) => {
-      if (err) {
-        console.log("alo en esta function anda mal bue");
-      } else {
-        const cake3 = result.data.values[0][0];
-        cake2 = cake3;
-        cake1.push(cake2);
-        res.json(cake1);
-      }
-    }
-  );
+    })
+    .then((data) => (cake2 = data.data.values[0][0]))
+    .catch((err) => console.log(err));
+
+  cake1.push(cake2);
+  res.json(cake1).status(200);
 });
 
 app.get("/recount", (req, res) => {
