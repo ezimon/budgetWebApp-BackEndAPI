@@ -28,6 +28,11 @@ app.get("/", (req, res) => {
   res.json("Whatchu looking at?");
 });
 
+app.get("/difCaja", (req, res) => {
+  const sheetname = moment().format('MMMM');
+  googleSheets.spreadsheets.values.append
+})
+
 app.post("/submit", async (req, res) => {
   let { monto, tipo, paga, tipoPers, sheetname, specs } = req.body;
   const fecha = moment().format("DD/MM/YYYY");
@@ -310,21 +315,6 @@ app.get("/cakeCurrent", async (req, res) => {
   const column = numToSSColumn(num);
   cake2 = [];
   const row = Number(moment().format("YYYY") - 2019);
-  // await googleSheets.spreadsheets.values.get(
-  //   {
-  //     auth,
-  //     spreadsheetId,
-  //     range: sheetname + "!L2:T2",
-  //   },
-  //   (err, result) => {
-  //     if (err) {
-  //       console.log("err");
-  //     } else {
-  //       const cake = result.data.values[0];
-  //       cake1 = cake;
-  //     }
-  //   }
-  // );
   await googleSheets.spreadsheets.values
     .get({
       auth,
@@ -402,5 +392,6 @@ app.get("/promedio", (req, res) => {
     }
   );
 });
+
 
 app.listen(process.env.PORT || 1337, (req, res) => console.log("wsgood"));
