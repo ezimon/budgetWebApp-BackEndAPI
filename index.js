@@ -403,4 +403,14 @@ app.get("/promedio", (req, res) => {
   );
 });
 
+app.post("/helen", (req, res) => {
+  if (process.env.ADMIN_EMAIL === req.body.email) {
+    res.status(200);
+    res.json("Success");
+  } else {
+    res.status(403);
+    res.json("F");
+  }
+});
+
 app.listen(process.env.PORT || 1337, (req, res) => console.log("wsgood"));
