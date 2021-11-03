@@ -394,7 +394,7 @@ app.get("/promedio", (req, res) => {
 });
 
 app.post("/helen", (req, res) => {
-  // console.log(req.body.email)
+  console.log(req.body.email)
   if (
     req.body.email === 'simonespeche123@gmail.com'
     // process.env.ADMIN_EMAIL === req.body ||
@@ -404,6 +404,7 @@ app.post("/helen", (req, res) => {
     res.status(200);
     res.json("Success");
   } else {
+    console.log('swah bby')
     res.status(403);
     res.json("F");
   }
