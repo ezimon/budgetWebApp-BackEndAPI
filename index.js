@@ -3,6 +3,15 @@ const { google } = require("googleapis");
 const app = express();
 const cors = require("cors");
 const moment = require("moment");
+const csrf = require("csurf");
+const csrfMiddleware = csrf({ cookie: true });
+
+const corsOptions = {
+  origin: 'http://localhost:3000',   
+  methods: "GET,HEAD,POST,PATCH,DELETE,OPTIONS",
+  credentials: true,               
+  allowedHeaders: "Content-Type, Authorization, X-Requested-With, Accept",
+}
 
 // CONSTANTES DE GOOGLE DEFINIDAS
 const auth = new google.auth.GoogleAuth({
@@ -23,6 +32,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/views"));
 app.use(cors());
 app.use(express.json());
+app.use(cors());
+
+app.options('*', cors(corsOptions))
+
+app.use(csrfMiddleware);
+
 
 app.get("/", (req, res) => {
   res.json("Whatchu looking at?");
