@@ -289,10 +289,11 @@ app.get("/saldo", (req, res) => {
     },
     (err, result) => {
       if (err) {
-        console.log("err");
+        console.log(err);
       } else {
         const saldo = result.data.values[0].join("");
         res.json(saldo);
+        console.log('alguien me pidio el saldo')
       }
     }
   );
