@@ -28,14 +28,14 @@ app.post("/submit", async (req, res) => {
   let { monto, tipo, paga, tipoPers, sheetname, specs } = req.body;
   const fecha = moment().format("DD/MM/YYYY");
   data = [fecha, tipo, "", monto, paga, specs];
-  console.log(data)
+  console.log(data);
   if (sheetname === "mesA") {
     sheetname = moment().format("MMMM");
   }
   if (tipo === "pers") {
     tipo = tipoPers;
   }
-  if (tipo === 'Dif. caja') {
+  if (tipo === "Dif. caja") {
     if (monto > 0) {
       data[2] = data[3] * -1;
       data[3] = "";
@@ -329,7 +329,7 @@ app.get("/cakeCurrent", async (req, res) => {
     })
     .then((data) => (cake2 = data.data.values[0][0]))
     .catch((err) => console.log(err));
-    cake1.push(cake2);
+  cake1.push(cake2);
   res.json(cake1).status(200);
 });
 
@@ -391,8 +391,8 @@ app.get("/promedio", (req, res) => {
 });
 
 app.post("/helen", (req, res) => {
-  console.log(req.body.email);
-  console.log(ADMIN_EMAIL)
+  console.log("El usuario " + req.body.email + " inició sesión");
+  console.log("let's see " + ADMIN_EMAIL);
   if (
     // req.body.email === "simonespeche123@gmail.com" ||
     // req.body.email === "simonespeche@hotmail.com" ||
