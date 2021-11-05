@@ -392,7 +392,7 @@ app.get("/promedio", (req, res) => {
 
 app.post("/helen", (req, res) => {
   console.log("El usuario " + req.body.email + " inició sesión");
-  const swag = ADMIN_EMAIL
+  const swag = process.env.ADMIN_EMAIL
   console.log(swag)
   if (
     // req.body.email === "simonespeche123@gmail.com" ||
