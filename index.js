@@ -392,7 +392,7 @@ app.get("/promedio", (req, res) => {
 
 app.post("/helen", (req, res) => {
   console.log("El usuario " + req.body.email + " inició sesión");
-  const swag = process.env.ADMIN_EMAIL
+  const swag = process.env.ADMIN_EMAIL3
   console.log(swag)
   if (
     // req.body.email === "simonespeche123@gmail.com" ||
@@ -401,7 +401,8 @@ app.post("/helen", (req, res) => {
     // req.body.email === "helendrajordeche@gmail.com"
     process.env.ADMIN_EMAIL === req.body.email ||
     process.env.ADMIN_EMAIL1 === req.body.email ||
-    process.env.ADMIN_EMAIL2 === req.body.email
+    process.env.ADMIN_EMAIL2 === req.body.email ||
+    process.env.ADMIN_EMAIL3 === req.body.email
   ) {
     res.status(200).send("Success");
     // res.json("Success");
