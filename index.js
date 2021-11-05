@@ -7,7 +7,7 @@ const { cuotasSheetId, spreadsheets } = require("./routes");
 
 // CONSTANTES DE GOOGLE DEFINIDAS
 const auth = new google.auth.GoogleAuth({
-  keyFile: "cred.json",
+  keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
   scopes: "https://www.googleapis.com/auth/spreadsheets",
 });
 const client = auth.getClient();
@@ -397,9 +397,9 @@ app.post("/helen", (req, res) => {
     // req.body.email === "simonespeche@hotmail.com" ||
     // req.body.email === "daniela.jorda@gmail.com" ||
     // req.body.email === "helendrajordeche@gmail.com"
-    process.env.ADMIN_EMAIL === req.body ||
-    process.env.ADMIN_EMAIL1 === req.body ||
-    process.env.ADMIN_EMAIL2 === req.body
+    process.env.ADMIN_EMAIL === req.body.email ||
+    process.env.ADMIN_EMAIL1 === req.body.email ||
+    process.env.ADMIN_EMAIL2 === req.body.email
   ) {
     res.status(200).send("Success");
     // res.json("Success");
