@@ -393,11 +393,13 @@ app.get("/promedio", (req, res) => {
 app.post("/helen", (req, res) => {
   console.log(req.body.email);
   if (
-    // req.body.email === "simonespeche123@gmail.com" ||
-    // req.body.email === "simonespeche@hotmail.com"
-    process.env.ADMIN_EMAIL === req.body ||
-    process.env.ADMIN_EMAIL1 === req.body ||
-    process.env.ADMIN_EMAIL2 === req.body
+    req.body.email === "simonespeche123@gmail.com" ||
+    req.body.email === "simonespeche@hotmail.com" ||
+    req.body.email === "daniela.jorda@gmail.com" ||
+    req.body.email === "helendrajordeche@gmail.com" ||
+    // process.env.ADMIN_EMAIL === req.body ||
+    // process.env.ADMIN_EMAIL1 === req.body ||
+    // process.env.ADMIN_EMAIL2 === req.body
   ) {
     res.status(200).send("Success");
     // res.json("Success");
