@@ -3,6 +3,7 @@ const { google } = require("googleapis");
 const app = express();
 const cors = require("cors");
 const moment = require("moment");
+const { cuotasSheetId, spreadsheets } = require("./routes");
 
 // CONSTANTES DE GOOGLE DEFINIDAS
 const auth = new google.auth.GoogleAuth({
@@ -11,11 +12,6 @@ const auth = new google.auth.GoogleAuth({
 });
 const client = auth.getClient();
 const googleSheets = google.sheets({ version: "v4", auth: client });
-const cuotasSheetId = "1i_wKKLCKeAhMVkVm23W_CSoSB18vfdCXXpw9864VWhY";
-const spreadsheets = [
-  "1mUhl_FfdbIVPv48MBp0ZLqkBTXcwCKhCxsREMnE8PqY",
-  "1OJOn8N0sz8P3W1qjIRRO5aao4ARydBm3Au5VvcFRyCU",
-];
 spreadsheetId = spreadsheets[moment().format("YYYY") - 2021];
 app.set("views", "./views");
 app.set("view engine", "ejs");
@@ -28,21 +24,22 @@ app.get("/", (req, res) => {
   res.json("Whatchu looking at?");
 });
 
-app.get("/difCaja", (req, res) => {
-  const sheetname = moment().format('MMMM');
-  googleSheets.spreadsheets.values.append
-})
-
 app.post("/submit", async (req, res) => {
   let { monto, tipo, paga, tipoPers, sheetname, specs } = req.body;
   const fecha = moment().format("DD/MM/YYYY");
   data = [fecha, tipo, "", monto, paga, specs];
-
+  console.log(data)
   if (sheetname === "mesA") {
     sheetname = moment().format("MMMM");
   }
   if (tipo === "pers") {
     tipo = tipoPers;
+  }
+  if (tipo === 'Dif. caja') {
+    if (monto > 0) {
+      data[2] = data[3] * -1;
+      data[3] = "";
+    }
   }
   if (tipo === "INGRESO") {
     data[2] = data[3];
@@ -293,7 +290,7 @@ app.get("/saldo", (req, res) => {
       } else {
         const saldo = result.data.values[0].join("");
         res.json(saldo);
-        console.log('alguien me pidio el saldo')
+        console.log("alguien me pidio el saldo");
       }
     }
   );
@@ -332,8 +329,7 @@ app.get("/cakeCurrent", async (req, res) => {
     })
     .then((data) => (cake2 = data.data.values[0][0]))
     .catch((err) => console.log(err));
-
-  cake1.push(cake2);
+    cake1.push(cake2);
   res.json(cake1).status(200);
 });
 
@@ -395,18 +391,19 @@ app.get("/promedio", (req, res) => {
 });
 
 app.post("/helen", (req, res) => {
-  console.log(req.body.email)
+  console.log(req.body.email);
   if (
-    req.body.email === 'simonespeche123@gmail.com'
-    // process.env.ADMIN_EMAIL === req.body ||
-    // process.env.ADMIN_EMAIL1 === req.body ||
-    // process.env.ADMIN_EMAIL2 === req.body
+    // req.body.email === "simonespeche123@gmail.com" ||
+    // req.body.email === "simonespeche@hotmail.com"
+    process.env.ADMIN_EMAIL === req.body ||
+    process.env.ADMIN_EMAIL1 === req.body ||
+    process.env.ADMIN_EMAIL2 === req.body
   ) {
-    res.status(200).send('Success');
+    res.status(200).send("Success");
     // res.json("Success");
   } else {
-    console.log('swah bby')
-    res.status(403).send('F');
+    console.log("swah bby");
+    res.status(403).send("F");
     // res.json("F");
   }
 });
