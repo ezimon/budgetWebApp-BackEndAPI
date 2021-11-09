@@ -28,7 +28,6 @@ app.post("/submit", async (req, res) => {
   let { monto, tipo, paga, tipoPers, sheetname, specs } = req.body;
   const fecha = moment().format("DD/MM/YYYY");
   data = [fecha, tipo, "", monto, paga, specs];
-  console.log(data);
   if (sheetname === "mesA") {
     sheetname = moment().format("MMMM");
   }
@@ -290,7 +289,6 @@ app.get("/saldo", (req, res) => {
       } else {
         const saldo = result.data.values[0].join("");
         res.json(saldo);
-        console.log("alguien me pidio el saldo");
       }
     }
   );
@@ -353,6 +351,14 @@ app.get("/recount", (req, res) => {
   );
 });
 
+app.get("/sheetid", (req, res) => {
+  res.json(spreadsheetId)
+})
+
+app.get("/cuotassheetid", (req, res) => {
+  res.json(cuotasSheetId)
+})
+
 app.get("/check", (req, res) => {
   googleSheets.spreadsheets.values.get(
     {
@@ -370,6 +376,8 @@ app.get("/check", (req, res) => {
     }
   );
 });
+
+
 
 app.get("/promedio", (req, res) => {
   const sheetname = moment().format("MMMM");
@@ -396,7 +404,7 @@ app.post("/helen", (req, res) => {
   console.log(swag)
   if (
     // req.body.email === "simonespeche123@gmail.com" ||
-    // req.body.email === "simonespeche@hotmail.com" ||
+    // req.body.email === "daraluzideas@gmail.com" ||
     // req.body.email === "daniela.jorda@gmail.com" ||
     // req.body.email === "helendrajordeche@gmail.com"
     process.env.ADMIN_EMAIL === req.body.email ||
@@ -413,4 +421,4 @@ app.post("/helen", (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 1337, (req, res) => console.log("wsgood"));
+app.listen(process.env.PORT || 1337, (req, res) => console.log("Server running..."));
